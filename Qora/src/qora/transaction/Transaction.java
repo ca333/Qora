@@ -148,14 +148,34 @@ public abstract class Transaction {
 	
 	public boolean hasMinimumFee()
 	{
-		return this.fee.compareTo(MINIMUM_FEE) >= 1; //min fee = 1 QORA
+		int BlockHeightV2 = 111111;
+		int lastBlockHeight = DBSet.getInstance().getHeightMap().get(DBSet.getInstance().getBlockMap().getLastBlockSignature());
+		
+		if(lastBlockHeight >= BlockHeightV2){
+			hasMinimumFeev2();
+		}
+		
+		else{
+			hasMinimumFeev1();
+		}
+
+	}
+	
+	public boolean hasMinimumFeev1()
+	{
+		return this.fee.compareTo(MINIMUM_FEE) >= 0;
+	}
+	
+	public boolean hasMinimumFeev2()
+	{
+		return this.fee.compareTo(MINIMUM_FEE) >= 1;
 	}
 	
 	public boolean hasMinimumFeePerByte()
 	{
 		BigDecimal minFeePerByte = BigDecimal.ONE.divide(BigDecimal.valueOf(Settings.getInstance().getMaxBytePerFee()), MathContext.DECIMAL32);
 		
-		return this.feePerByte().compareTo(minFeePerByte) >= 0.01;  // smart fee = 1 QORA per 100 byte
+		return this.feePerByte().compareTo(minFeePerByte) >= 0;  // smart fee not affected
 	}
 	
 	//PARSE/CONVERT
